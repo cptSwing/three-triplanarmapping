@@ -1,50 +1,23 @@
-# React + TypeScript + Vite
+# three-triplanarmapping
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## A threeJs shader for object-space triplanar mapping (WIP)
 
-Currently, two official plugins are available:
+..using [CustomShaderMaterial](https://github.com/FarazzShaikh/THREE-CustomShaderMaterial). Thrown together in typescript.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- Working version leaning heavily on https://github.com/bgolus/Normal-Mapping-for-a-Triplanar-Shader/blob/master/TriplanarUDN.shader
+- Supports diffuse, normal, roughness maps for now
+- clones a PBR THREE.MeshStandardMaterial
+- `createTriplanarMaterial()` returns a triplanar material, check `lib/triplanarMaterial.ts` for parameters
+- `yarn install` and `yarn dev` to view test [react-three-fiber](https://github.com/pmndrs/react-three-fiber) scene (`Scene.tsx`)
 
-## Expanding the ESLint configuration
+ToDo:
+[] World Space shader
+[] Extend to emissive, metalness etc
+[] Remove unnecessary samples when not all axes have separate textures supplied - use textureX on Y, Z
+[] different blend options (only YZ, for example)
+[] Clean up and separate material return function from test scene
+[] list as package?
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
-
-- Configure the top-level `parserOptions` property like this:
-
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+[1](./screen1.jpg)
+[2](./screen2.jpg)
+[3](./screen3.jpg)
