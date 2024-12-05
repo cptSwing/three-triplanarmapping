@@ -11,12 +11,13 @@
 - `yarn install` and `yarn dev` to view test [react-three-fiber](https://github.com/pmndrs/react-three-fiber) scene (`Scene.tsx`)
 
 ToDo:
-[] World Space shader
-[] Extend to emissive, metalness etc
-[] Remove unnecessary samples when not all axes have separate textures supplied - use textureX on Y, Z
-[] different blend options (only YZ, for example)
-[] Clean up and separate material return function from test scene
-[] list as package?
+
+- [] World Space shader
+- [] Extend to emissive, metalness etc
+- [] Remove unnecessary samples when not all axes have separate textures supplied - use textureX on Y, Z
+- [] different blend options (only YZ, for example)
+- [] Clean up and separate material return function from test scene
+- [] list as package?
 
 Lots of info gleaned from
 
