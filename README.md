@@ -26,6 +26,6 @@ Lots of info gleaned from
 
 cheers!
 
-[1](./screen1.jpg)
-[2](./screen2.jpg)
-[3](./screen3.jpg)
+![1](./screen1.jpg)
+![2](./screen2.jpg)
+![3](./screen3.jpg)
