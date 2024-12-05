@@ -28,7 +28,7 @@ void main() {
     vec2 uvZ = vPositionChoice.xy * u_mapScale;
 
     // // flip mirrored sides (only working in local for now??):
-    vec3 axisSign = getSafeAxisSign(vNormalChoice);
+    vec3 axisSign = getSafeAxisSign(vNormal);
     uvX.x *= axisSign.x;
     uvY.x *= axisSign.y;
     uvZ.x *= -axisSign.z;
@@ -61,9 +61,7 @@ void main() {
     // flip normal maps' x axis to account for flipped UVs
     unpacked_normal_X.x *= axisSign.x;
     unpacked_normal_Y.x *= axisSign.y;
-    // unpacked_normal_Z.x *= axisSign.z;
-
-    unpacked_normal_Y.y *= axisSign.y;
+    unpacked_normal_Z.x *= -axisSign.z;
 
     // swizzle world normals to match tangent space and apply ala UDN normal blending
     vec3 tnormalX = vec3(unpacked_normal_X.xy + vNormal.zy, vNormal.x);
