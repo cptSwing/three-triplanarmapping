@@ -1,78 +1,135 @@
-import { MeshStandardMaterial, ShaderChunk, ShaderMaterial } from 'three';
+import { LinearSRGBColorSpace, MathUtils, MeshStandardMaterial, RepeatWrapping, ShaderChunk, SRGBColorSpace, TextureLoader } from 'three';
 // import { ShaderChunk } from 'three/src/renderers/shaders/ShaderChunk';
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
+import getWorldPosition_Function from './shaders/getWorldPosition.glsl';
+import getWorldNormal_Function from './shaders/getWorldNormal.glsl';
+
+import structs_Fragment from './shaders/structs_FRAG.glsl';
+import getSafeAxisSign_Function from './shaders/getSafeAxisSign.glsl';
+import getRotatedUv_Function from './shaders/getRotatedUv.glsl';
+import getTbn_Function from './shaders/getTbn.glsl';
+
 import triplanarVertexShader from './shaders/triplanar_VERT.glsl';
 import triplanarFragmentShader from './shaders/triplanar_FRAG.glsl';
 
-export type TriPlanarDefaultUniforms = typeof triPlanarDefaultUniforms;
+const textureLoader = new TextureLoader();
 
-export const triPlanarDefaultUniforms = {
-    u_polishedMaterialRoughnessValue: {
-        value: 0.05,
+const baseColorX_TEX = await textureLoader.loadAsync('/textures/Testing_Images_basecolorX.png');
+baseColorX_TEX.colorSpace = SRGBColorSpace;
+baseColorX_TEX.wrapS = RepeatWrapping;
+baseColorX_TEX.wrapT = RepeatWrapping;
+
+const baseColorY_TEX = await textureLoader.loadAsync('/textures/Testing_Images_basecolorY.png');
+baseColorY_TEX.colorSpace = SRGBColorSpace;
+baseColorY_TEX.wrapS = RepeatWrapping;
+baseColorY_TEX.wrapT = RepeatWrapping;
+
+const baseColorZ_TEX = await textureLoader.loadAsync('/textures/Testing_Images_basecolorZ.png');
+baseColorZ_TEX.colorSpace = SRGBColorSpace;
+baseColorZ_TEX.wrapS = RepeatWrapping;
+baseColorZ_TEX.wrapT = RepeatWrapping;
+
+const normalX_TEX = await textureLoader.loadAsync('/textures/Testing_Images_normalX.png');
+normalX_TEX.colorSpace = LinearSRGBColorSpace;
+normalX_TEX.wrapS = RepeatWrapping;
+normalX_TEX.wrapT = RepeatWrapping;
+
+const normalY_TEX = await textureLoader.loadAsync('/textures/Testing_Images_normalY.png');
+normalY_TEX.colorSpace = LinearSRGBColorSpace;
+normalY_TEX.wrapS = RepeatWrapping;
+normalY_TEX.wrapT = RepeatWrapping;
+
+const normalZ_TEX = await textureLoader.loadAsync('/textures/Testing_Images_normalZ.png');
+normalZ_TEX.colorSpace = LinearSRGBColorSpace;
+normalZ_TEX.wrapS = RepeatWrapping;
+normalZ_TEX.wrapT = RepeatWrapping;
+
+const roughnessX_TEX = await textureLoader.loadAsync('/textures/Testing_Images_roughnessX.png');
+roughnessX_TEX.colorSpace = LinearSRGBColorSpace;
+roughnessX_TEX.wrapS = RepeatWrapping;
+roughnessX_TEX.wrapT = RepeatWrapping;
+
+const roughnessY_TEX = await textureLoader.loadAsync('/textures/Testing_Images_roughnessY.png');
+roughnessY_TEX.colorSpace = LinearSRGBColorSpace;
+roughnessY_TEX.wrapS = RepeatWrapping;
+roughnessY_TEX.wrapT = RepeatWrapping;
+
+const roughnessZ_TEX = await textureLoader.loadAsync('/textures/Testing_Images_roughnessZ.png');
+roughnessZ_TEX.colorSpace = LinearSRGBColorSpace;
+roughnessZ_TEX.wrapS = RepeatWrapping;
+roughnessZ_TEX.wrapT = RepeatWrapping;
+
+const triPlanarDefaultUniforms = {
+    u_mapY: {
+        value: baseColorY_TEX,
+    },
+    u_mapZ: {
+        value: baseColorZ_TEX,
+    },
+    u_normalMapX: {
+        value: normalX_TEX,
+    },
+    u_normalMapY: {
+        value: normalY_TEX,
+    },
+    u_normalMapZ: {
+        value: normalZ_TEX,
+    },
+    u_roughnessMapX: {
+        value: roughnessX_TEX,
+    },
+    u_roughnessMapY: {
+        value: roughnessY_TEX,
+    },
+    u_roughnessMapZ: {
+        value: roughnessZ_TEX,
     },
     u_mapScale: {
-        value: 250,
+        value: 2,
     },
     u_blendExponent: {
-        value: 2,
+        value: 6,
     },
     u_debug: {
         value: false,
     },
 };
 
-/**
- * Creates a triplanar shader material with custom properties.
- *
- * @param {Partial<MetalMaterial>} params - Parameters to customize the material.
- * @returns {MetalMaterial} A MetalMaterial instance with triplanar mapping and custom shaders.
- *
- * @description
- * This function generates a MetalMaterial using the CustomShaderMaterial class, configured with
- * triplanar mapping shaders. It allows for custom properties such as color, metalness, roughness, and various maps.
- */
-export const createTriplanarMaterial = (params: Partial<MeshStandardMaterial & ShaderMaterial>) => {
-    const { map, metalness, roughness, uniforms } = params;
-
+const createTriplanarMaterial = ({ useWorldPosition = true, useWorldNormal = true }: { useWorldPosition: boolean; useWorldNormal: boolean }) => {
     const triPlanarParams = {
         baseMaterial: MeshStandardMaterial,
         // defines: {
-        //     USE_TRIPLANAR: getOrthogonalVector_FUNCTION + createTriPlTBN_FUNCTION,
+        //     USE_TRIPLANAR: ' ',
         // },
-        map,
-        metalness,
-        roughness,
-        vertexShader: triplanarVertexShader,
-        fragmentShader: triplanarFragmentShader,
-        uniforms,
+        map: baseColorX_TEX,
+        metalness: 1,
+        roughness: 0.2,
+        vertexShader: getWorldPosition_Function + getWorldNormal_Function + triplanarVertexShader,
+        fragmentShader: structs_Fragment + getRotatedUv_Function + getSafeAxisSign_Function + getTbn_Function + triplanarFragmentShader,
+        patchMap: {
+            '*': {
+                '#include <normal_fragment_begin>': normal_fragment_begin_PATCHED,
+            },
+        },
+        uniforms: {
+            ...triPlanarDefaultUniforms,
+            u_seWorldPosition: {
+                value: useWorldPosition,
+            },
+            u_seWorldNormal: {
+                value: useWorldNormal,
+            },
+        },
     };
 
     const triPlanarShaderMaterial = new CustomShaderMaterial(triPlanarParams);
     return triPlanarShaderMaterial;
 };
 
-const { normal_fragment_maps } = ShaderChunk;
+const comparisonMaterial = new MeshStandardMaterial({ map: baseColorX_TEX, normalMap: normalX_TEX, metalness: 1, roughnessMap: roughnessX_TEX });
 
-const normal_fragment_maps_PATCHED = normal_fragment_maps.replace(
-    /* We - mostly - do not have tangents, yet need to transform the resulting mapN (triPlanarNormalsOS) by a TBN matrix - so we build one. Should probably be doing this on CPU (how?) */
-    '#elif defined( USE_NORMALMAP_TANGENTSPACE )',
-    /* glsl */ `
-    // BEGIN patched normal_fragment_maps
+export { createTriplanarMaterial, comparisonMaterial };
 
-    #elif defined ( USE_TRIPLANAR )
+const { normal_fragment_begin } = ShaderChunk;
 
-        vec3 existingNormal = normal;
-
-        mat3 triPlanarTBN = createTriPlTBN(normal);
-        csm_TangentTriPlanarNormals.xy *= normalScale;
-
-        vec3 triPlanarNormalsOS = normalize(triPlanarTBN * csm_TangentTriPlanarNormals);
-
-        // Would prefer to do this in fragmentShader, but at that point in shader execution, we do not have correct 'rest-normals' yet
-        normal = mix(existingNormal, triPlanarNormalsOS, vIsPointingOutwards); 
-
-    #elif defined ( USE_NORMALMAP_TANGENTSPACE )
-
-    // END patched normal_fragment_maps
-    `,
-);
+const normal_fragment_begin_PATCHED = normal_fragment_begin.replace('vec3 normal = normalize( vNormal );', 'vec3 normal = normalize(triplanar_normal);');
