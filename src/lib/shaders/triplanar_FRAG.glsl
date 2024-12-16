@@ -1,3 +1,6 @@
+#include ./triBlend.frag;
+#include /node_modules/glsl-functions/fragment/safeSign.frag;
+
 uniform sampler2D u_mapY;
 uniform sampler2D u_mapZ;
 uniform sampler2D u_normalMapX;
@@ -12,31 +15,16 @@ uniform float u_blendExponent;
 varying vec3 csm_vPosition;
 varying vec3 csm_vNormal;
 
-vec3 getBlendingFactor(vec3 normal, float exponent) {
-    vec3 bf = normalize(abs(normal));
-    bf = saturate(pow(bf, vec3(exponent)));
-    bf /= max(dot(bf, vec3(1.)), 0.0001);
-    return bf;
-}
-
-// Since sign() can return 0.0 if the component equals 0
-vec3 getSafeAxisSign(vec3 axes) {
-    float xSign = axes.x < 0. ? -1. : 1.;
-    float ySign = axes.y < 0. ? -1. : 1.;
-    float zSign = axes.z < 0. ? -1. : 1.;
-    return vec3(xSign, ySign, zSign);
-}
-
 // UDN Blend, as described here: https://github.com/bgolus/Normal-Mapping-for-a-Triplanar-Shader/blob/master/TriplanarUDN.shader
 void main() {
-    vec3 blending_factor = getBlendingFactor(csm_vNormal, u_blendExponent);
+    vec3 blending_factor = triBlend(csm_vNormal, u_blendExponent);
 
     vec2 uvX = csm_vPosition.zy * u_mapScale;
     vec2 uvY = csm_vPosition.xz * u_mapScale;
     vec2 uvZ = csm_vPosition.xy * u_mapScale;
 
     // flip mirrored uv's
-    vec3 axisSign = getSafeAxisSign(csm_vNormal);
+    vec3 axisSign = safeSign(csm_vNormal);
     uvX.x *= -axisSign.x;
     uvY.x *= -axisSign.y;
     uvZ.x *= axisSign.z;
