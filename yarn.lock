@@ -1708,10 +1708,10 @@ globalthis@^1.0.4:
     define-properties "^1.2.1"
     gopd "^1.0.1"
 
-glsl-functions@^0.0.1:
-  version "0.0.1"
-  resolved "https://registry.yarnpkg.com/glsl-functions/-/glsl-functions-0.0.1.tgz#028c41c4e162a12d75358599006ef07f1ff72a67"
-  integrity sha512-q0bpM1Eqc+ngTGkGvaId8g9Vw09TLbXceXDg/rtv/vvV47TRc4ZgvCNryjwwoswJcbutenH4Q6UvgIJ9XvncUg==
+glsl-functions@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/glsl-functions/-/glsl-functions-0.0.3.tgz#ace79b2591a4b951f8a6f02591449bc7c263d90f"
+  integrity sha512-l0WN+UOifpeaaPkRvGBeqEF5Y69ZQW1sFPtDsOz9qhnNM21MH3X6Hj2oKRhJuJYgxzpMuqoS4plEPindPuqdgA==
 
 glsl-noise@^0.0.0:
   version "0.0.0"

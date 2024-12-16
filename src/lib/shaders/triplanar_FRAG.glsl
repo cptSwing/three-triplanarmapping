@@ -1,5 +1,5 @@
 #include ./triBlend.frag;
-#include /node_modules/glsl-functions/fragment/safeSign.frag;
+#include /node_modules/glsl-functions/utility/safeSign.glsl;
 
 uniform sampler2D u_mapY;
 uniform sampler2D u_mapZ;
